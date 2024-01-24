@@ -1,0 +1,119 @@
+﻿@model UsersList
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="card">
+        <div class="card-header">
+            <h5>Edit Record</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Name</label>
+                    <input type="text" id="txtName" asp-for="@Model.Name" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Scheme</label>
+                    <input type="text" id="txtScheme" asp-for="@Model.Scheme" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Index</label>
+                    <input type="text" id="txtIndex"  asp-for="@Model.Index" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Amount</label>
+                    <input type="number" id="txtAmount"  asp-for="@Model.Amount" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>P/E</label>
+                    <input type="number" id="txtpe"  asp-for="@Model.PE" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>P/B</label>
+                    <input type="number" id="txtpb"  asp-for="@Model.PB" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Divident</label>
+                    <input type="number" id="txtDivident"  asp-for="@Model.Divident" class="form-control" />
+                </div>
+            </div>
+            <div class="row d-flex" style="justify-content: end;">
+                <a href="/" class="btn btn-secondary btn-sm">Cancel</a>
+                <button type="button" class="btn btn-success btn-sm ml-2" onclick="saveData('@Model.Id')">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var saveData = (id) => {
+            let obj = {
+                Id:id,
+                Name: $('#txtName').val(),
+                Scheme: $('#txtScheme').val(),
+                Index: $('#txtIndex').val(),
+                Amount: $('#txtAmount').val(),
+                PE: $('#txtpe').val(),
+                PB: $('#txtpb').val(),
+                Divident: $('#txtDivident').val(),
+            }
+            if (obj.Name == '') {
+                alert('Please Enter Name');
+                $('#txtName').focus();
+                return false;
+            }
+            if (obj.Scheme == '') {
+                alert('Please Enter Name');
+                $('#txtScheme').focus();
+                return false;
+            }
+            if (obj.Index == '') {
+                alert('Please Enter Index');
+                $('#txtIndex').focus();
+                return false;
+            }
+            if (obj.Amount == '' || obj.Amount == '0') {
+                alert('Please Enter Amount');
+                $('#txtAmount').focus();
+                return false;
+            }
+            if (obj.PE == '' || obj.PE == '0') {
+                alert('Please Enter PE');
+                $('#txtpe').focus();
+                return false;
+            }
+            if (obj.PB == '' || obj.PB == '0') {
+                alert('Please Enter PB');
+                $('#txtpb').focus();
+                return false;
+            }
+            if (obj.Divident == '' || obj.Divident == '0') {
+                alert('Please Enter Divident');
+                $('#txtDivident').focus();
+                return false;
+            }
+            $('#btnSave').text('Submit');
+            $('#btnSave').removeAttr('disabled');
+            let formData = new FormData();
+            formData.append('JsonString', JSON.stringify(obj));
+            $.ajax({
+                type: "POST",
+                url: "/Home/Save",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(result) {
+                    alert(result.responseText);
+                    if (result.statusCode == 1) {
+                        $('input').val('');
+                        window.location.href = "/home/index";
+                    }
+                    $('#btnSave').text('Submit');
+                    $('#btnSave').removeAttr('disabled');
+                }
+            });
+        }
+    </script>
+}

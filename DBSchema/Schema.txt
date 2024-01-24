@@ -1,0 +1,101 @@
+﻿Create table Users
+(
+Id int identity,
+[Name] varchar(150),
+Scheme varchar(150),
+[Index] varchar(150),
+Amount numeric(18,2),
+PE numeric(18,2),
+PB numeric(18,2),
+Divident numeric(18,2),
+PerentId int,
+FileURL varchar(240)
+)
+
+=========================
+
+
+Alter Proc Proc_AddUpdateUsers
+@Id int,
+@Name varchar(150),
+@Scheme varchar(150),
+@Index varchar(150),
+@Amount numeric(18,2),
+@PE numeric(18,2),
+@PB numeric(18,2),
+@Divident numeric(18,2),
+@PerentId int,
+@FileURL varchar(510)
+AS
+BEGIN
+	IF @Id = 0
+	BEGIN
+		Insert into Users([Name],Scheme,[Index],Amount,PE,PB,Divident,PerentId,FileURL)
+		Values(@Name,@Scheme,@Index,@Amount,@PE,@PB,@Divident,@PerentId,@FileURL);
+		select 1 StatusCode,'Success' ResponseText
+	END
+	else
+	begin
+		update Users Set [Name] = @Name,Scheme = @Scheme,[Index] = @Index,Amount = @Amount,PE = @PE,PB = @PB,Divident = @Divident,PerentId = @PerentId,FileURL = @FileURL
+		where Id = @Id
+		select 1 StatusCode,'Success' ResponseText
+	end
+END
+
+
+
+===============
+
+ alter proc Proc_getData
+@Id int
+AS
+BEGIN
+	If @Id = 0
+	BEGIN
+		Create table #RecursiveUsers
+		(
+			Id int,
+			[Name] varchar(150),
+			Scheme varchar(150),
+			[Index] varchar(150),
+			Amount numeric(18,2),
+			PE numeric(18,2),
+			PB numeric(18,2),
+			Divident numeric(18,2),
+			PerentId int,
+			FileURL varchar(240),
+			PerentName varchar(240)
+		)
+		insert into #RecursiveUsers
+		select *,'N/A' PerentName from Users where Id = 1 and ISNULL(PerentId,0) = 0
+
+		While @@ROWCOUNT > 0
+		begin
+			Insert into #RecursiveUsers
+			select u1.Id,u1.Name,u1.Scheme,u1.[Index],u1.Amount,u1.PE,u1.PB,u1.Divident,u1.PerentId,u1.FileURL,u2.Name PerentName from Users u1
+			inner join #RecursiveUsers u2 on u1.PerentId = u2.Id
+			where u1.PerentId = u2.Id and u1.id not in(select Id from #RecursiveUsers)
+
+		end
+		select * from  #RecursiveUsers
+		drop table #RecursiveUsers
+	END
+	else
+	begin
+		Select * from Users Where Id = @Id
+	end
+END
+
+
+
+
+
+
+================================
+create proc Proc_DeleteUsers
+@Id int
+AS
+BEGIN
+	Delete From Users Where id = @Id
+	Select 1 StatusCode,'Record Deleted successfully.' ResponseText
+END 

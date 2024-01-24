@@ -1,0 +1,211 @@
+﻿@model IEnumerable<UsersList>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="card" style="width:100%">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <input type="file" class="form-control" id="txtfile" />
+                </div>
+                <div class="col-sm-8">
+                    <h5>Equity Index Funds</h5>
+                    <p>Some text here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row py-3">
+    <h5>Some Heading</h5>
+</div>
+<div class="row">
+    <div class="card" style="width:100%">
+        <div class="card-header">
+            <div class="row d-flex" style="justify-content:end;">
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="btn-add">Add</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Scheme</th>
+                            <th>Index</th>
+                            <th>Amount</th>
+                            <th>P/E</th>
+                            <th>P/B</th>
+                            <th>Divident</th>
+                            <th>Perent</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+                            foreach (var item in Model)
+                            {
+                                i++;
+                                                <tr>
+                                                    <td>@i</td>
+                                                    <td>@item.Name</td>
+                                                    <td>@item.Scheme</td>
+                                                    <td>@item.Index</td>
+                                                    <td>@item.Amount</td>
+                                                    <td>@item.PE</td>
+                                                    <td>@item.PB</td>
+                                                    <td>@item.Divident</td>
+                                                    <td>@item.PerentName</td>
+                                                    <td>
+                                                        <a class="btn btn-info btn-sm" href="@item.FileURL" target="_blank">Download</a>
+                                                        <a class="btn btn-primary btn-sm" href="/home/edit?Id=@item.Id">Edit</a>
+                                                        <button class="btn btn-danger btn-sm" onclick="deleteRecord('@item.Id')">Delete</button>
+                                                    </td>
+                                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Record</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Name</label>
+                        <input type="text" id="txtName" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Scheme</label>
+                        <input type="text" id="txtScheme" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Index</label>
+                        <input type="text" id="txtIndex" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Amount</label>
+                        <input type="number" id="txtAmount" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>P/E</label>
+                        <input type="number" id="txtpe" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>P/B</label>
+                        <input type="number" id="txtpb" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Divident</label>
+                        <input type="number" id="txtDivident" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="saveData()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var saveData = (id) => {
+            let obj = {
+                Id:id,
+                Name: $('#txtName').val(),
+                Scheme: $('#txtScheme').val(),
+                Index: $('#txtIndex').val(),
+                Amount: $('#txtAmount').val(),
+                PE: $('#txtpe').val(),
+                PB: $('#txtpb').val(),
+                Divident: $('#txtDivident').val(),
+            }
+            if (obj.Name == '') {
+                alert('Please Enter Name');
+                $('#txtName').focus();
+                return false;
+            }
+            if (obj.Scheme == '') {
+                alert('Please Enter Name');
+                $('#txtScheme').focus();
+                return false;
+            }
+            if (obj.Index == '') {
+                alert('Please Enter Index');
+                $('#txtIndex').focus();
+                return false;
+            }
+            if (obj.Amount == '' || obj.Amount == '0') {
+                alert('Please Enter Amount');
+                $('#txtAmount').focus();
+                return false;
+            }
+            if (obj.PE == '' || obj.PE == '0') {
+                alert('Please Enter PE');
+                $('#txtpe').focus();
+                return false;
+            }
+            if (obj.PB == '' || obj.PB == '0') {
+                alert('Please Enter PB');
+                $('#txtpb').focus();
+                return false;
+            }
+            if (obj.Divident == '' || obj.Divident == '0') {
+                alert('Please Enter Divident');
+                $('#txtDivident').focus();
+                return false;
+            }
+            let file = $('#txtfile')[0].files[0];
+            if (file == undefined) {
+                $('.close').click();
+            }
+            $('#btnSave').text('Submit');
+            $('#btnSave').removeAttr('disabled');
+            let formData = new FormData();
+            formData.append('JsonString', JSON.stringify(obj));
+            formData.append('formFile', file);
+            $.ajax({
+                type: "POST",
+                url: "/Home/Save",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(result) {
+                    alert(result.responseText);
+                    if (result.statusCode == 1) {
+                        $('input').val('');
+                        window.location.href = "/home/index";
+                    }
+                    $('#btnSave').text('Submit');
+                    $('#btnSave').removeAttr('disabled');
+                }
+            });
+        }
+        var deleteRecord = (id) => {
+            $.post('/home/delete', { Id: id }).done((res) => {
+                alert(res.responseText);
+                if(res.statusCode== 1){
+                    window.location.href = "/home/index";
+                }
+            }).fail((xhr) => {
+                console.log(xhr.responseText);
+            });
+        }
+    </script>
+}
